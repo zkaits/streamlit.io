@@ -21,7 +21,7 @@ log_file = "click_log.txt"
 
 try:
     driver.get("https://onlyno999.streamlit.app/")
-    time.sleep(10)  # 等待页面加载
+    time.sleep(25)  # 等待页面加载
 
     # 查找按钮
     buttons = driver.find_elements(By.XPATH, "//button[contains(text(), 'get this app back up')]")
