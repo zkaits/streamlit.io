@@ -3,15 +3,17 @@ name: Auto Click Streamlit
 on:
   schedule:
     - cron: '0 */12 * * *'     # 每 12 小时自动运行
-  workflow_dispatch:           # 手动运行支持
+  workflow_dispatch:           # 支持手动运行
 
 jobs:
   clicker:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
+    - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        persist-credentials: true    # 允许提交更改
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -25,8 +27,10 @@ jobs:
     - name: Run auto click script
       run: python auto_click.py
 
-    - name: Upload click log
-      uses: actions/upload-artifact@v4
-      with:
-        name: click-log
-        path: click_log.txt
+    - name: Commit log file to repo
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add click_log.txt
+        git commit -m "更新日志: $(date +'%Y-%m-%d %H:%M:%S')" || echo "无变化，无需提交"
+        git push
