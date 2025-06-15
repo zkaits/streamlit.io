@@ -55,7 +55,7 @@ def clean_old_logs():
 clean_old_logs()
 
 try:
-    driver.get("https://share.streamlit.io/-/auth/app?redirect_uri=https://onlyno999.streamlit.app/")
+    driver.get("https://onlyno999.streamlit.app/")
     time.sleep(30)  # 等待页面加载
 
     # 查找按钮
