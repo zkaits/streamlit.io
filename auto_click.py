@@ -13,15 +13,15 @@ options.add_argument('--headless')
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 
-# 创建 Service 对象
+# 创建 Chrome 驱动
 service = Service(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=service, options=options)
 
-# 日志文件路径
+# 日志配置
 log_file = "click_log.txt"
-log_retention_days = 2  # 保留天数
+log_retention_days = 2  # 日志保留天数
 
-# 清理旧日志记录
+# 清理旧日志函数
 def clean_old_logs():
     if not os.path.exists(log_file):
         return
@@ -51,33 +51,37 @@ def clean_old_logs():
     except Exception as e:
         print(f"日志清理失败：{e}")
 
-# 开始执行
+# 执行清理
 clean_old_logs()
 
+# 主逻辑开始
 try:
     driver.get("https://onlyno999.streamlit.app/")
-    time.sleep(30)  # 等待页面加载
+    print("已打开网页，等待页面加载 30 秒...")
+    time.sleep(30)  # 初次加载等待
 
     # 查找按钮
     buttons = driver.find_elements(By.XPATH, "//button[contains(text(), 'get this app back up')]")
-
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
     if buttons:
         buttons[0].click()
-        log_entry = f"[{timestamp}] 按钮已点击\n"
-        print("检测到按钮，已点击。")
+        print("检测到按钮，已点击。等待 45 秒完成恢复操作...")
+        time.sleep(45)  # 点击后等待
+        log_entry = f"[{timestamp}] 按钮已点击，已等待45秒完成\n"
     else:
+        print("未检测到按钮，跳过点击。")
         log_entry = f"[{timestamp}] 未发现按钮，未执行点击\n"
-        print("未检测到按钮，跳过。")
 
     with open(log_file, "a", encoding="utf-8") as f:
         f.write(log_entry)
 
 except Exception as e:
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    with open(log_file, "a", encoding="utf-8") as f:
-        f.write(f"[{timestamp}] 错误：{str(e)}\n")
+    error_msg = f"[{timestamp}] 错误：{str(e)}\n"
     print(f"发生错误：{e}")
+    with open(log_file, "a", encoding="utf-8") as f:
+        f.write(error_msg)
 
 finally:
     driver.quit()
